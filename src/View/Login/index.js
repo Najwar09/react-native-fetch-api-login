@@ -18,6 +18,44 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 
 export default function Login({navigation}) {
+  const api = 'https://stunting.fihaa-app.com/login';
+
+  const [data,setData] = useState({
+    email: '',
+    password: '',
+  })
+    
+
+
+  const ButtonLogin = () =>{
+    if(cekNull(data.email) || cekNull(data.password))
+      return alert('data tidak boleh kosong');
+    
+  
+
+  fetch(api, {
+    method: 'POST',
+    headers: {
+      'Content-Type':'application/json',
+    },
+    body: JSON.stringify({
+      username: data.email.toLowerCase(),
+      password: data.password.toLowerCase(),
+    }),
+  })
+  .then(res => res.json())
+  .then(res => {
+    if(res.message == 'Success'){
+      return navigation.navigate('Home');
+    }
+    return alert('user atau password salah');
+  });
+};
+
+
+
+
+
   const [icon, setIcon] = useState({
     icon: 'eye',
     status: true,
@@ -52,6 +90,7 @@ export default function Login({navigation}) {
             backgroundColor: COLOR.WHITE,
             height: hp(110),
           }}>
+
           {/* Image Start */}
           <View style={[styles.ContainerImage]}>
             {/* <Image
@@ -76,10 +115,10 @@ export default function Login({navigation}) {
               width: '100%',
               paddingVertical: wp(4),
               marginTop: 20,
-              // backgroundColor: '#c0c0c0',
+              backgroundColor: '#c0c0c0',
             }}>
             <TextInput
-              placeholder="Name"
+              placeholder="email"
               underlineColor="transparent"
               theme={{colors: {primary: COLOR.BLUE}}}
               style={{
@@ -96,7 +135,10 @@ export default function Login({navigation}) {
               }}
               left={
                 <TextInput.Icon name="account" color={COLOR.BLUE} />
-              }></TextInput>
+              }
+              onChangeText={e => setData({...data,email:e})}
+              ></TextInput>
+
             <TextInput
               placeholder="Password"
               underlineColor="transparent"
@@ -121,7 +163,9 @@ export default function Login({navigation}) {
                   color={COLOR.GREY}
                   onPress={showPass}
                 />
-              }></TextInput>
+              }
+              onChangeText={e => setData({...data,password:e})}
+              ></TextInput>
 
             <TouchableOpacity
               style={{alignItems: 'flex-end', paddingRight: wp(4)}}>
@@ -131,7 +175,7 @@ export default function Login({navigation}) {
           {/* TextInput End */}
           <TouchableOpacity
             style={[styles.ButtonMasuk]}
-            onPress={() => navigation.navigate('Home')}>
+            onPress={ButtonLogin}>
             <Text style={{fontWeight: 'bold', color: COLOR.WHITE}}>MASUK</Text>
           </TouchableOpacity>
         </View>
@@ -154,7 +198,7 @@ const styles = StyleSheet.create({
     top: wp(10),
   },
   LoginContainer: {
-    width: wp(25),
+    width: wp(50),
     height: hp(5),
     // backgroundColor: COLOR.BLUE,
     marginLeft: wp(5),
